@@ -4,6 +4,7 @@ const {
   customers,
   revenue,
   users,
+  movies,
 } = require('../app/lib/placeholder-data.js');
 const bcrypt = require('bcrypt');
 
@@ -19,7 +20,6 @@ async function seedUsers(client) {
         password TEXT NOT NULL
       );
     `;
-
     console.log(`Created "users" table`);
 
     // Insert data into the "users" table
@@ -160,6 +160,63 @@ async function seedRevenue(client) {
   }
 }
 
+async function seedMovies(client) {
+  try {
+    await client.sql`CREATE EXTENSION IF NOT EXISTS "uuid-ossp"`;
+
+    // Create the "movies" table if it doesn't exist
+    const createTable = await client.sql`
+  CREATE TABLE IF NOT EXISTS movies (
+    id INT PRIMARY KEY,
+    title VARCHAR(255),
+    overview TEXT,
+    release_date DATE,
+    original_language VARCHAR(50),
+    popularity FLOAT,
+    vote_average FLOAT,
+    vote_count INT,
+    adult BOOLEAN,
+    video BOOLEAN,
+    backdrop_path VARCHAR(255),
+    poster_path VARCHAR(255),
+    genre_ids TEXT
+  );
+`;
+
+    console.log(`Created "movies" table`);
+
+    // Insert data into the "movies" table
+    const insertedMovies = await Promise.all(
+      movies.map(
+        (movie) => client.sql`
+        INSERT INTO movies (id, title, overview, 
+          release_date, original_language,
+           popularity, vote_average, vote_count, 
+           adult, video, backdrop_path, 
+           poster_path, genre_ids)
+
+        VALUES (${movie.id}, ${movie.title}, ${movie.overView}, 
+          ${movie.release_date} , ${movie.original_language}
+          , ${movie.popularity}, ${movie.vote_average}, ${movie.vote_count}
+          , ${movie.adult}, ${movie.video}, ${movie.backdrop_path}, 
+          ${movie.poster_path}, ${movie.genre_ids})
+        ON CONFLICT (id) DO NOTHING;
+      `,
+      ),
+    );
+
+    console.log(`Seeded ${insertedMovies.length} movies`);
+
+    return {
+      createTable,
+      movies: insertedMovies,
+    };
+  } catch (error) {
+    console.error('Error seeding movies:', error);
+    throw error;
+  }
+}
+
 async function main() {
   const client = await db.connect();
 
@@ -167,6 +224,7 @@ async function main() {
   await seedCustomers(client);
   await seedInvoices(client);
   await seedRevenue(client);
+  await seedMovies(client);
 
   await client.end();
 }
