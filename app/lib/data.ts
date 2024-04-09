@@ -56,29 +56,6 @@ export async function fetchLatestInvoices() {
   }
 }
 
-export async function fetchMovies() {
-  // Add noStore() here to prevent the response from being cached.
-  // This is equivalent to in fetch(..., {cache: 'no-store'}).
-  noStore();
-
-  try {
-    // Artificially delay a response for demo purposes.
-    // Don't do this in production :)
-
-    console.log('Fetching movies data...');
-    await new Promise((resolve) => setTimeout(resolve, 3000));
-
-    const data = await sql<Movies>`SELECT * FROM movies`;
-
-    console.log('Data fetch completed after 3 seconds.');
-
-    return data.rows;
-  } catch (error) {
-    console.error('Database Error:', error);
-    throw new Error('Failed to fetch movies data.');
-  }
-}
-
 export async function fetchCardData() {
   noStore();
   try {
@@ -171,6 +148,53 @@ export async function fetchInvoicesPages(query: string) {
   } catch (error) {
     console.error('Database Error:', error);
     throw new Error('Failed to fetch total number of invoices.');
+  }
+}
+
+export async function fetchMoviesPages(query: string) {
+  noStore();
+  try {
+    const count = await sql`
+      SELECT COUNT(*)
+      FROM movies
+      WHERE
+        title ILIKE ${`%${query}%`} 
+`;
+
+    if (!count.rows.length) {
+      throw new Error('No movies found.');
+    }
+
+    const totalPages = Math.ceil(Number(count.rows[0].count) / ITEMS_PER_PAGE);
+    return totalPages;
+  } catch (error) {
+    console.error('Database Error:', error);
+    throw new Error(
+      'Failed to fetch total number of movies. Please try again later.',
+    );
+  }
+}
+export async function fetchMoviesByQuery(query: string, currentPage: number) {
+  noStore();
+  const offset = (currentPage - 1) * ITEMS_PER_PAGE;
+  try {
+    const movies = await sql<Movies>`
+    SELECT *
+    FROM movies
+    WHERE
+      title ILIKE ${`%${query}%`} OR
+      overview ILIKE ${`%${query}%`} OR
+      original_language ILIKE ${`%${query}%`} OR
+      popularity::text ILIKE ${`%${query}%`} OR
+      vote_average::text ILIKE ${`%${query}%`}
+    ORDER BY release_date DESC
+    LIMIT ${ITEMS_PER_PAGE}
+    OFFSET ${offset}
+  `;
+    return movies.rows;
+  } catch (error) {
+    console.error('Database Error:', error);
+    throw new Error('Failed to fetch movies.');
   }
 }
 
