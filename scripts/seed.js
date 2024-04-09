@@ -195,7 +195,7 @@ async function seedMovies(client) {
            adult, video, backdrop_path, 
            poster_path, genre_ids)
 
-        VALUES (${movie.id}, ${movie.title}, ${movie.overView}, 
+        VALUES (${movie.id}, ${movie.title}, ${movie.overview}, 
           ${movie.release_date} , ${movie.original_language}
           , ${movie.popularity}, ${movie.vote_average}, ${movie.vote_count}
           , ${movie.adult}, ${movie.video}, ${movie.backdrop_path}, 
