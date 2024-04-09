@@ -216,3 +216,57 @@ export function InvoicesTableSkeleton() {
     </div>
   );
 }
+
+export async function MoviesSkeleton() {
+  return (
+    <div className="mt-6 flow-root">
+      <div className="inline-block min-w-full align-middle">
+        <div className="rounded-lg bg-gray-50 p-2 md:pt-0">
+          <div className="md:hidden">{/* Placeholder for mobile view */}</div>
+          <table className="hidden min-w-full text-gray-900 md:table">
+            <thead className="rounded-lg text-left text-sm font-normal">
+              <tr>
+                <th scope="col" className="px-4 py-5 font-medium sm:pl-6">
+                  Title
+                </th>
+                <th scope="col" className="px-3 py-5 font-medium">
+                  Release Date
+                </th>
+                <th scope="col" className="px-3 py-5 font-medium">
+                  Popularity
+                </th>
+                <th scope="col" className="px-3 py-5 font-medium">
+                  Overview
+                </th>
+              </tr>
+            </thead>
+            <tbody className="bg-white">
+              <tr className="w-full border-b border-gray-100 last-of-type:border-none [&:first-child>td:first-child]:rounded-tl-lg [&:first-child>td:last-child]:rounded-tr-lg [&:last-child>td:first-child]:rounded-bl-lg [&:last-child>td:last-child]:rounded-br-lg">
+                {/* Title and Poster */}
+                <td className="relative overflow-hidden whitespace-nowrap py-3 pl-6 pr-3">
+                  <div className="flex items-center gap-3">
+                    <div className="flex items-center"></div>
+                    <div className="h-6 w-24 rounded bg-gray-100"></div>
+                  </div>
+                </td>
+
+                {/* Release Date */}
+                <td className="whitespace-nowrap px-3 py-3">
+                  <div className="h-6 w-16 rounded bg-gray-100"></div>
+                </td>
+                {/* Popularity */}
+                <td className="whitespace-nowrap px-3 py-3">
+                  <div className="h-6 w-16 rounded bg-gray-100"></div>
+                </td>
+                {/* Overview */}
+                <td className="whitespace-nowrap px-3 py-3">
+                  <div className="h-6 w-16 rounded bg-gray-100"></div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  );
+}
